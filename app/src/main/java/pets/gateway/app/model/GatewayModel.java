@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppModel {
-    private String varOne;
-    private Integer varTwo;
-    private boolean varThree;
+public class GatewayModel {
+    private String msg;
 }

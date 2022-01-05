@@ -15,6 +15,10 @@ public class RoutesUtil {
 
     private static Map<String, String> theRoutesMap = null;
 
+    private static final String PETS_DATABASE = "pets-database";
+    private static final String PETS_SERVICE = "pets-service";
+    private static final String PETS_AUTHENTICATE = "pets-authenticate";
+
     private static final String PETS_DB_BASE_DEV = "http://localhost:8002";
     private static final String PETS_SVC_BASE_DEV = "http://localhost:8003";
     private static final String PETS_AUTH_BASE_DEV = "http://localhost:8004";
@@ -53,9 +57,9 @@ public class RoutesUtil {
             endpointBasePetsAuthenticate = PETS_AUTH_BASE_PROD;
         }
 
-        routesMap.put("endpointBasePetsDatabase", endpointBasePetsDatabase);
-        routesMap.put("endpointBasePetsService", endpointBasePetsService);
-        routesMap.put("endpointBasePetsAuthenticate", endpointBasePetsAuthenticate);
+        routesMap.put("pets-database", endpointBasePetsDatabase);
+        routesMap.put("pets-service", endpointBasePetsService);
+        routesMap.put("pets-authenticate", endpointBasePetsAuthenticate);
 
         theRoutesMap = new HashMap<>();
         theRoutesMap.putAll(routesMap);
@@ -65,5 +69,14 @@ public class RoutesUtil {
 
     public static Map<String, String> routesMap() {
         return Objects.requireNonNullElseGet(theRoutesMap, RoutesUtil::setRoutesMap);
+    }
+
+    public static String getRoute(String requestUri) {
+        try {
+            String routeBase = requestUri.split("/")[1];
+            return routesMap().get(routeBase);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
