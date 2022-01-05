@@ -6,7 +6,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import pets.gateway.app.filter.GatewayFilter;
+import pets.gateway.app.filter.GatewayFilterLogging;
+import pets.gateway.app.filter.GatewayFilterHeaderAuth;
 import pets.gateway.app.servlet.GatewayServlet;
 import pets.gateway.app.util.Util;
 
@@ -30,10 +31,10 @@ public class ServerJetty {
 
     private ServletHandler getServletHandler() {
         ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addFilterWithMapping(GatewayFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-
+        servletHandler.addFilterWithMapping(GatewayFilterLogging.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        servletHandler.addFilterWithMapping(GatewayFilterHeaderAuth.class, "/pets-service/*", EnumSet.of(DispatcherType.REQUEST));
+        servletHandler.addFilterWithMapping(GatewayFilterHeaderAuth.class, "/pets-database/*", EnumSet.of(DispatcherType.REQUEST));
         servletHandler.addServletWithMapping(GatewayServlet.class, "/*");
-
         return servletHandler;
     }
 }

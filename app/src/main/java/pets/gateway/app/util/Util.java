@@ -30,6 +30,8 @@ public class Util {
     public static final int SERVER_MIN_THREADS = 20;
     public static final int SERVER_IDLE_TIMEOUT = 120;
 
+    public static final String TRACE = "TRACE";
+
     // routes auth not required
     public static final List<String> AUTHORIZATION_NOT_NEEDED = List.of(
             "/pets-service/tests/ping",

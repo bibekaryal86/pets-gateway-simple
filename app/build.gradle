@@ -21,6 +21,8 @@ dependencies {
     implementation 'org.eclipse.jetty:jetty-server:11.0.7'
     implementation 'org.eclipse.jetty:jetty-servlet:11.0.7'
     implementation 'com.google.code.gson:gson:2.8.9'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
     implementation('org.slf4j:slf4j-api') {
         version {

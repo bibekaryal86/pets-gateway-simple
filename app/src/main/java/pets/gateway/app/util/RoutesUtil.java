@@ -72,7 +72,7 @@ public class RoutesUtil {
         return Objects.requireNonNullElseGet(theRoutesMap, RoutesUtil::setRoutesMap);
     }
 
-    public static String getRoute(String requestUri) {
+    public static String getRouteBase(String requestUri) {
         try {
             String routeBase = requestUri.split("/")[1];
             return routesMap().get(routeBase);

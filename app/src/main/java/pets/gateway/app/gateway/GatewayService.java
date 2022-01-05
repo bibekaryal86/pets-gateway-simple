@@ -17,7 +17,7 @@ import java.util.Objects;
 public class GatewayService {
 
     private String trace(HttpServletRequest request) {
-        return Objects.requireNonNullElse(request.getAttribute("TRACE"), "TERROR").toString();
+        return Objects.requireNonNullElse(request.getAttribute(Util.TRACE), "TERROR").toString();
     }
 
     private Map<String, String> getHeaders(HttpServletRequest request) {
@@ -39,7 +39,7 @@ public class GatewayService {
     public GatewayResponse gatewayService(HttpServletRequest request) {
         String trace = trace(request);
         String requestUri = request.getRequestURI();
-        String routeBase = RoutesUtil.getRoute(requestUri);
+        String routeBase = RoutesUtil.getRouteBase(requestUri);
 
         if (!Util.hasText(routeBase)) {
             log.info("[ {} ] | Route Not Found for requestURI: [ {} ]", trace, requestUri);
