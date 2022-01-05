@@ -1,4 +1,4 @@
-package nospring.service.skeleton.app.util;
+package pets.gateway.app.util;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
 
@@ -22,11 +21,6 @@ public class Util {
     public static final String SERVER_PORT = "PORT";
     public static final String TIME_ZONE = "TZ";
     public static final String PROFILE = "SPRING_PROFILES_ACTIVE";
-    public static final String BASIC_AUTH_USR = "BASIC_AUTH_USR";
-    public static final String BASIC_AUTH_PWD = "BASIC_AUTH_PWD";
-
-    // server context-path
-    public static final String CONTEXT_PATH = "/nospring-service-skeleton";     // NOSONAR
 
     // others
     public static final int SERVER_MAX_THREADS = 100;
@@ -59,14 +53,6 @@ public class Util {
                         return false;
                     }
                 }).create();
-    }
-
-    public static boolean isAuthenticatedRequest(HttpServletRequest request) {
-        String username = getSystemEnvProperty(BASIC_AUTH_USR);
-        String password = getSystemEnvProperty(BASIC_AUTH_PWD);
-        String authorization = Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
-        String headerAuth = request.getHeader("Authorization");
-        return hasText(headerAuth) && headerAuth.equals(String.format("Basic %s", authorization));
     }
 
     public static String getRequestPathParameter(HttpServletRequest request, int length, int position) {

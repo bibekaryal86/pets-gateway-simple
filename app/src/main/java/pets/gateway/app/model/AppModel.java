@@ -1,4 +1,4 @@
-package nospring.service.skeleton.app.model;
+package pets.gateway.app.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

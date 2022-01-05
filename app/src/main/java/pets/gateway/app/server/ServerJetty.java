@@ -1,10 +1,9 @@
-package nospring.service.skeleton.app.server;
+package pets.gateway.app.server;
 
 import jakarta.servlet.DispatcherType;
-import nospring.service.skeleton.app.filter.ServletFilter;
-import nospring.service.skeleton.app.servlet.AppPing;
-import nospring.service.skeleton.app.servlet.AppReset;
-import nospring.service.skeleton.app.util.Util;
+import pets.gateway.app.filter.GatewayFilter;
+import pets.gateway.app.servlet.GatewayServlet;
+import pets.gateway.app.util.Util;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -31,10 +30,9 @@ public class ServerJetty {
 
     private ServletHandler getServletHandler() {
         ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addFilterWithMapping(ServletFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        servletHandler.addFilterWithMapping(GatewayFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
-        servletHandler.addServletWithMapping(AppPing.class, Util.CONTEXT_PATH + "/tests/ping");
-        servletHandler.addServletWithMapping(AppReset.class, Util.CONTEXT_PATH + "/tests/reset");
+        servletHandler.addServletWithMapping(GatewayServlet.class, "/*");
 
         return servletHandler;
     }

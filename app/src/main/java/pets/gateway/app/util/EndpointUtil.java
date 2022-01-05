@@ -1,9 +1,9 @@
-package nospring.service.skeleton.app.util;
+package pets.gateway.app.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nospring.service.skeleton.app.exception.CustomRuntimeException;
+import pets.gateway.app.exception.CustomRuntimeException;
 
 import java.util.HashMap;
 import java.util.Map;
