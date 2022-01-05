@@ -1,14 +1,14 @@
 package pets.gateway.app.server;
 
 import jakarta.servlet.DispatcherType;
-import pets.gateway.app.filter.GatewayFilter;
-import pets.gateway.app.servlet.GatewayServlet;
-import pets.gateway.app.util.Util;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import pets.gateway.app.filter.GatewayFilter;
+import pets.gateway.app.servlet.GatewayServlet;
+import pets.gateway.app.util.Util;
 
 import java.util.EnumSet;
 

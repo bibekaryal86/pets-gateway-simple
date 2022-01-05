@@ -13,23 +13,24 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoutesUtil {
 
-    private static Map<String, String> theRoutesMap = null;
-
+    // the services
     private static final String PETS_DATABASE = "pets-database";
     private static final String PETS_SERVICE = "pets-service";
     private static final String PETS_AUTHENTICATE = "pets-authenticate";
-
+    // development
     private static final String PETS_DB_BASE_DEV = "http://localhost:8002";
     private static final String PETS_SVC_BASE_DEV = "http://localhost:8003";
     private static final String PETS_AUTH_BASE_DEV = "http://localhost:8004";
-
+    // docker
     private static final String PETS_DB_BASE_DOCKER = "http://pets-database:8002";
     private static final String PETS_SVC_BASE_DOCKER = "http://pets-service:8003";
     private static final String PETS_AUTH_BASE_DOCKER = "http://pets-authenticate:8004";
-
+    // production
     private static final String PETS_DB_BASE_PROD = "https://pets-database.appspot.com";
     private static final String PETS_SVC_BASE_PROD = "https://pets-service.appspot.com";
     private static final String PETS_AUTH_BASE_PROD = "https://pets-authenticate.appspot.com";
+    // the map
+    private static Map<String, String> theRoutesMap = null;
 
     private static Map<String, String> setRoutesMap() {
         Map<String, String> routesMap = new HashMap<>();
@@ -57,9 +58,9 @@ public class RoutesUtil {
             endpointBasePetsAuthenticate = PETS_AUTH_BASE_PROD;
         }
 
-        routesMap.put("pets-database", endpointBasePetsDatabase);
-        routesMap.put("pets-service", endpointBasePetsService);
-        routesMap.put("pets-authenticate", endpointBasePetsAuthenticate);
+        routesMap.put(PETS_DATABASE, endpointBasePetsDatabase);
+        routesMap.put(PETS_SERVICE, endpointBasePetsService);
+        routesMap.put(PETS_AUTHENTICATE, endpointBasePetsAuthenticate);
 
         theRoutesMap = new HashMap<>();
         theRoutesMap.putAll(routesMap);
