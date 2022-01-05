@@ -15,7 +15,6 @@ public class GatewayServlet extends HttpServlet {
     private static final String PING_SUCCESSFUL = "{\"ping\": \"successful\"}";
     private static final String PING_UNSUCCESSFUL = "{\"ping\": \"method not allowed\"}";
 
-
     private boolean isTestPing(String requestUri) {
         return requestUri.contains("/tests/ping");
     }
