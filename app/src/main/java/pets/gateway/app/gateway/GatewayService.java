@@ -8,13 +8,32 @@ import pets.gateway.app.util.ConnectorUtil;
 import pets.gateway.app.util.RoutesUtil;
 import pets.gateway.app.util.Util;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 public class GatewayService {
 
     private String trace(HttpServletRequest request) {
-        return Objects.requireNonNullElse(request.getAttribute("TRACE"), "TRACE_ERROR").toString();
+        return Objects.requireNonNullElse(request.getAttribute("TRACE"), "TERROR").toString();
+    }
+
+    private Map<String, String> getHeaders(HttpServletRequest request) {
+        Map<String, String> headers = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            String key = headerNames.nextElement();
+
+            if (!Util.RESTRICTED_HEADERS.contains(key)) {
+                String value = request.getHeader(key);
+                headers.put(key, value);
+            }
+        }
+        headers.putAll(RoutesUtil.getRouteAuthHeader(request.getRequestURI()));
+        return headers;
     }
 
     public GatewayResponse gatewayService(HttpServletRequest request) {
@@ -32,7 +51,10 @@ public class GatewayService {
                     .build();
         } else {
             String outgoingUrl = routeBase.concat(requestUri);
-            return ConnectorUtil.sendHttpRequest(outgoingUrl, request.getMethod(), null, null, trace);
+            String httpMethod = request.getMethod();
+            Map<String, String> headers = getHeaders(request);
+            Object bodyObject = Util.getRequestBody(request);
+            return ConnectorUtil.sendHttpRequest(outgoingUrl, httpMethod, bodyObject, headers, trace);
         }
     }
 }

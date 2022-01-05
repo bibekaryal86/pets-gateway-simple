@@ -80,4 +80,16 @@ public class RoutesUtil {
             return null;
         }
     }
+
+    public static Map<String, String> getRouteAuthHeader(String requestUri) {
+        if (Util.AUTHORIZATION_NOT_NEEDED.contains(requestUri)) {
+            return new HashMap<>();
+        } else if (requestUri.contains(PETS_DATABASE)) {
+            return Util.getPetsDatabaseAuthHeader();
+        } else if (requestUri.contains(PETS_SERVICE)) {
+            return Util.getPetsServiceAuthHeader();
+        } else {
+            return new HashMap<>();
+        }
+    }
 }

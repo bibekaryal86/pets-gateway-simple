@@ -16,11 +16,16 @@ public class GatewayFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletRequest.setAttribute(TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
 
-        logRequest(httpServletRequest);
-        chain.doFilter(request, response);
-        logResponse(httpServletRequest, httpServletResponse);
+        if ("/favicon.ico".equals(httpServletRequest.getRequestURI())) {
+            httpServletResponse.setStatus(200);
+        } else {
+            httpServletRequest.setAttribute(TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+
+            logRequest(httpServletRequest);
+            chain.doFilter(request, response);
+            logResponse(httpServletRequest, httpServletResponse);
+        }
     }
 
     private void logRequest(HttpServletRequest httpServletRequest) {
