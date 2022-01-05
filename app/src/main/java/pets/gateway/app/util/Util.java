@@ -9,8 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
 
@@ -19,8 +18,12 @@ import java.util.Map;
 public class Util {
     // provided at runtime
     public static final String SERVER_PORT = "PORT";
-    public static final String TIME_ZONE = "TZ";
     public static final String PROFILE = "SPRING_PROFILES_ACTIVE";
+    public static final String BASIC_AUTH_USR_PETSDATABASE = "BASIC_AUTH_USR_PETSDATABASE";
+    public static final String BASIC_AUTH_PWD_PETSDATABASE = "BASIC_AUTH_PWD_PETSDATABASE";
+    public static final String BASIC_AUTH_USR_PETSSERVICE = "BASIC_AUTH_USR_PETSSERVICE";
+    public static final String BASIC_AUTH_PWD_PETSSERVICE = "BASIC_AUTH_PWD_PETSSERVICE";
+    public static final String SECRET_KEY = "SECRET_KEY";
 
     // others
     public static final int SERVER_MAX_THREADS = 100;
@@ -31,17 +34,9 @@ public class Util {
         return (System.getProperty(keyName) != null) ? System.getProperty(keyName) : System.getenv(keyName);
     }
 
-    public static LocalDateTime getLocalDateTimeNow() {
-        return LocalDateTime.now(ZoneId.of(getSystemEnvProperty(Util.TIME_ZONE)));
-    }
-
     public static boolean hasText(String s) {
         return (s != null && !s.trim().isEmpty());
     }
-
-    public static boolean isEmpty(Collection<?> c) { return (c == null || c.isEmpty()); }
-
-    public static boolean isEmpty(Map<?, ?> m) { return (m == null || m.isEmpty()); }
 
     public static Gson getGson() {
         return new GsonBuilder()
@@ -55,12 +50,22 @@ public class Util {
                 }).create();
     }
 
-    public static String getRequestPathParameter(HttpServletRequest request, int length, int position) {
-        String[] requestUriArray = request.getRequestURI().split("/");
-        if (requestUriArray.length == length && hasText(requestUriArray[position])) {
-            return requestUriArray[position];
-        }
-        return null;
+    public static String getSecretKey() {
+        return getSystemEnvProperty(SECRET_KEY);
+    }
+
+    public static Map<String, String> getPetsServiceAuthHeader() {
+        String username = getSystemEnvProperty(BASIC_AUTH_USR_PETSSERVICE);
+        String password = getSystemEnvProperty(BASIC_AUTH_PWD_PETSSERVICE);
+        String authorization = Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
+        return Map.of("Authorization", String.format("Basic %s", authorization));
+    }
+
+    public static Map<String, String> getPetsDatabaseAuthHeader() {
+        String username = getSystemEnvProperty(BASIC_AUTH_USR_PETSDATABASE);
+        String password = getSystemEnvProperty(BASIC_AUTH_PWD_PETSDATABASE);
+        String authorization = Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
+        return Map.of("Authorization", String.format("Basic %s", authorization));
     }
 
     public static Object getRequestBody(HttpServletRequest request, Class<?> clazz) {
