@@ -24,11 +24,11 @@ public class GatewayFilter implements Filter {
     }
 
     private void logRequest(HttpServletRequest httpServletRequest) {
-        log.info("REQUEST::: [ {} ] | Incoming: [ {} ] | Method: [ {} ]",
+        log.info("[ {} ] | REQUEST::: Incoming: [ {} ] | Method: [ {} ]",
                 httpServletRequest.getAttribute(TRACE), httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
     }
 
     private void logResponse(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        log.info("RESPONSE::: [ {} ] | Status [ {} ]", httpServletRequest.getAttribute(TRACE), httpServletResponse.getStatus());
+        log.info("[ {} ] | RESPONSE::: Status [ {} ]", httpServletRequest.getAttribute(TRACE), httpServletResponse.getStatus());
     }
 }

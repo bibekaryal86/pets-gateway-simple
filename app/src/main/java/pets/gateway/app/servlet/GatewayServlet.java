@@ -8,7 +8,6 @@ import pets.gateway.app.model.GatewayResponse;
 import pets.gateway.app.util.Util;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class GatewayServlet extends HttpServlet {
     private static final String CHARACTER_ENCODING = "utf-8";
@@ -21,10 +20,6 @@ public class GatewayServlet extends HttpServlet {
         return array.length > 2 && array[1].equals("tests") && array[2].equals("ping");
     }
 
-    private String trace(HttpServletRequest request) {
-        return Objects.requireNonNullElse(request.getAttribute("TRACE"), "TRACE_ERROR").toString();
-    }
-
     private void doEverything(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding(CHARACTER_ENCODING);
         response.addHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
@@ -34,7 +29,7 @@ public class GatewayServlet extends HttpServlet {
             response.setStatus(200);
             response.getWriter().print(PING_SUCCESSFUL);
         } else {
-            GatewayResponse gatewayResponse = new GatewayService().doGatewayService(request.getRequestURI(), trace(request));
+            GatewayResponse gatewayResponse = new GatewayService().gatewayService(request);
 
             response.setStatus(gatewayResponse.getStatusCode());
             response.getWriter().print(Util.getGson().toJson(gatewayResponse.getObject()));

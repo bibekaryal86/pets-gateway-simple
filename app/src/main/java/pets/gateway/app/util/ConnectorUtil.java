@@ -3,8 +3,8 @@ package pets.gateway.app.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pets.gateway.app.exception.CustomRuntimeException;
-import org.eclipse.jetty.http.HttpMethod;
+import pets.gateway.app.model.GatewayModel;
+import pets.gateway.app.model.GatewayResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +33,7 @@ public class ConnectorUtil {
     }
 
     private static HttpRequest getHttpRequestBuilder(String endpoint,
-                                                     HttpMethod httpMethod,
+                                                     String httpMethod,
                                                      Object bodyObject,
                                                      Map<String, String> headers) {
         HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
@@ -46,14 +46,21 @@ public class ConnectorUtil {
             }
         }
 
-        if (httpMethod == HttpMethod.POST) {
-            httpRequestBuilder = httpRequestBuilder.POST(getPOST(bodyObject));
-        } else if (httpMethod == HttpMethod.PUT) {
-            httpRequestBuilder = httpRequestBuilder.PUT(getPOST(bodyObject));
-        } else if (httpMethod == HttpMethod.DELETE) {
-            httpRequestBuilder = httpRequestBuilder.DELETE();
-        } else if (httpMethod == HttpMethod.GET) {
-            httpRequestBuilder = httpRequestBuilder.GET();
+        switch (httpMethod) {
+            case "POST":
+                httpRequestBuilder = httpRequestBuilder.POST(getPOST(bodyObject));
+                break;
+            case "PUT":
+                httpRequestBuilder = httpRequestBuilder.PUT(getPOST(bodyObject));
+                break;
+            case "DELETE":
+                httpRequestBuilder = httpRequestBuilder.DELETE();
+                break;
+            case "GET":
+                httpRequestBuilder = httpRequestBuilder.GET();
+                break;
+            default:
+                break;
         }
 
         return httpRequestBuilder.build();
@@ -63,13 +70,14 @@ public class ConnectorUtil {
         return getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
     }
 
-    public static Object sendHttpRequest(String endpoint,
-                                         HttpMethod httpMethod,
-                                         Object bodyObject,
-                                         Map<String, String> headers,
-                                         Class<?> clazz) {
+    public static GatewayResponse sendHttpRequest(String endpoint,
+                                                  String httpMethod,
+                                                  Object bodyObject,
+                                                  Map<String, String> headers,
+                                                  String trace) {
         try {
-            log.info("HTTP Request Sent::: Endpoint: [ {} ], Method: [ {} ], Headers: [ {} ], Body: [ {} ]",
+            log.info("[ {} ] HTTP Request Sent::: Endpoint: [ {} ], Method: [ {} ], Headers: [ {} ], Body: [ {} ]",
+                    trace,
                     endpoint,
                     httpMethod,
                     headers == null ? 0 : headers.size(),
@@ -78,19 +86,32 @@ public class ConnectorUtil {
             HttpRequest httpRequest = getHttpRequestBuilder(endpoint, httpMethod, bodyObject, headers);
             HttpResponse<String> httpResponse = sendHttpRequest(httpRequest);
 
-            log.info("HTTP Response Received::: Endpoint: [ {} ], Status: [ {} ], Body: [ {} ]",
+            log.info("[ {} ] HTTP Response Received::: Endpoint: [ {} ], Status: [ {} ], Body: [ {} ]",
+                    trace,
                     endpoint,
                     httpResponse.statusCode(),
                     httpResponse.body() == null ? null : httpResponse.body().length());
 
-            return Util.getGson().fromJson(httpResponse.body(), clazz);
+            Object object = Util.getGson().fromJson(httpResponse.body(), Object.class);
+
+            return GatewayResponse.builder()
+                    .statusCode(httpResponse.statusCode())
+                    .object(object)
+                    .build();
         } catch (InterruptedException ex) {
-            log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
+            log.error("[ {} ] Error in HttpClient Send: [ {} ] | [ {} ] | [ {} ]",
+                    trace, endpoint, httpMethod, ex.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception ex) {
-            log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
+            log.error("[ {} ] Error in HttpClient Send: [ {} ] | [ {} ] | [ {} ]",
+                    trace, endpoint, httpMethod, ex.getMessage());
         }
 
-        throw new CustomRuntimeException("HTTP ERROR");
+        return GatewayResponse.builder()
+                .statusCode(503)
+                .object(GatewayModel.builder()
+                        .errMsg("Error! Something Went Wrong!! Please Try Again!!!")
+                        .build())
+                .build();
     }
 }
