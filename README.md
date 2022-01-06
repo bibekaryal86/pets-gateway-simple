@@ -1,5 +1,7 @@
 # nospring-service-skeleton
 
+* Main Repo: https://github.com/bibekaryal86/pets-gateway-layer
+
 This is a simple app which provides gateway routing functions for Personal Expenses Tracking System application. This
 app is a scaled down version of `pets-gateway-layer` app found here: https://github.com/bibekaryal86/pets-gateway-layer.
 The other app uses Spring Cloud Gateway framework to do the exact same function as this app
