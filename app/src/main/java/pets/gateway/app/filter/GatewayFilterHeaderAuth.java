@@ -96,7 +96,8 @@ public class GatewayFilterHeaderAuth implements Filter {
     }
 
     private boolean isIgnoreRequests(HttpServletRequest request) {
-        return AUTHORIZATION_NOT_NEEDED.contains(request.getRequestURI());
+        return "OPTIONS".equals(request.getMethod()) ||
+                AUTHORIZATION_NOT_NEEDED.contains(request.getRequestURI());
     }
 
     private void logRequestDetails(HttpServletRequest request, String trace) {
