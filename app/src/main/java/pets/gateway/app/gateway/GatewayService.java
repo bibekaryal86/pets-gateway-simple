@@ -41,6 +41,24 @@ public class GatewayService {
         return headers;
     }
 
+    private String getParameters(HttpServletRequest request) {
+        StringBuilder stringBuilder = new StringBuilder("?");
+        Map<String, String[]> paramMap = request.getParameterMap();
+
+        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+            for (String s : entry.getValue()) {
+                stringBuilder.append(entry.getKey());
+                stringBuilder.append("=");
+                stringBuilder.append(s);
+                stringBuilder.append("&");
+            }
+        }
+
+        int length = stringBuilder.length();
+        stringBuilder.deleteCharAt(length-1);
+        return stringBuilder.toString();
+    }
+
     public GatewayResponse gatewayService(HttpServletRequest request) {
         String trace = trace(request);
         String requestUri = request.getRequestURI();
@@ -55,7 +73,7 @@ public class GatewayService {
                             .build())
                     .build();
         } else {
-            String outgoingUrl = routeBase.concat(requestUri);
+            String outgoingUrl = routeBase.concat(requestUri).concat(getParameters(request));
             String httpMethod = request.getMethod();
             Map<String, String> headers = getHeaders(request);
             Object bodyObject = getRequestBody(request);
