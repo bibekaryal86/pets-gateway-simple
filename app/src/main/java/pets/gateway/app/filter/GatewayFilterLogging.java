@@ -1,13 +1,18 @@
 package pets.gateway.app.filter;
 
-import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import pets.gateway.app.util.Util;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static pets.gateway.app.util.Util.TRACE;
 
 @Slf4j
 public class GatewayFilterLogging implements Filter {
@@ -20,8 +25,8 @@ public class GatewayFilterLogging implements Filter {
             httpServletResponse.setStatus(200);
         } else {
             // just in case, because there are multiple filters
-            if (request.getAttribute(Util.TRACE) == null) {
-                httpServletRequest.setAttribute(Util.TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+            if (request.getAttribute(TRACE) == null) {
+                httpServletRequest.setAttribute(TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
             }
 
             logRequest(httpServletRequest);
@@ -32,11 +37,11 @@ public class GatewayFilterLogging implements Filter {
 
     private void logRequest(HttpServletRequest httpServletRequest) {
         log.info("[ {} ] | REQUEST::: Incoming: [ {} ] | Method: [ {} ]",
-                httpServletRequest.getAttribute(Util.TRACE), httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
+                httpServletRequest.getAttribute(TRACE), httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
     }
 
     private void logResponse(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         log.info("[ {} ] | RESPONSE::: Status [ {} ]",
-                httpServletRequest.getAttribute(Util.TRACE), httpServletResponse.getStatus());
+                httpServletRequest.getAttribute(TRACE), httpServletResponse.getStatus());
     }
 }

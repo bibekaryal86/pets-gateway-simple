@@ -2,38 +2,41 @@ package pets.gateway.app.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import pets.gateway.app.util.RoutesUtil;
-import pets.gateway.app.util.Util;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static pets.gateway.app.util.Util.AUTHORIZATION_NOT_NEEDED;
+import static pets.gateway.app.util.Util.TRACE;
+import static pets.gateway.app.util.Util.getSecretKey;
+import static pets.gateway.app.util.Util.hasText;
+
 @Slf4j
 public class GatewayFilterHeaderAuth implements Filter {
-
-    // move adding header from gatewayservice to here
 
     private static final long TIME_TO_EXPIRY_FOR_RENEWAL_REQUEST = 300000;     // FIVE MINUTES
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     private String trace(HttpServletRequest request) {
-        return Objects.requireNonNullElse(request.getAttribute(Util.TRACE), "TERROR").toString();
+        return Objects.requireNonNullElse(request.getAttribute(TRACE), "TERROR").toString();
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         // just in case, because there are multiple filters
-        if (request.getAttribute(Util.TRACE) == null) {
-            httpServletRequest.setAttribute(Util.TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        if (request.getAttribute(TRACE) == null) {
+            httpServletRequest.setAttribute(TRACE, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         }
         String trace = trace(httpServletRequest);
 
@@ -66,11 +69,11 @@ public class GatewayFilterHeaderAuth implements Filter {
         try {
             String oldToken = request.getHeader(AUTHORIZATION_HEADER);
 
-            if (Util.hasText(oldToken)) {
+            if (hasText(oldToken)) {
                 oldToken = oldToken.replace("Bearer ", "");
 
                 Claims claims = Jwts.parser()
-                        .setSigningKey(Util.getSecretKey())
+                        .setSigningKey(getSecretKey())
                         .parseClaimsJws(oldToken)
                         .getBody();
 
@@ -93,7 +96,7 @@ public class GatewayFilterHeaderAuth implements Filter {
     }
 
     private boolean isIgnoreRequests(HttpServletRequest request) {
-        return Util.AUTHORIZATION_NOT_NEEDED.contains(request.getRequestURI());
+        return AUTHORIZATION_NOT_NEEDED.contains(request.getRequestURI());
     }
 
     private void logRequestDetails(HttpServletRequest request, String trace) {

@@ -5,9 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import pets.gateway.app.gateway.GatewayService;
 import pets.gateway.app.model.GatewayResponse;
-import pets.gateway.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.gateway.app.util.Util.getGson;
 
 public class GatewayServlet extends HttpServlet {
     private static final String CHARACTER_ENCODING = "utf-8";
@@ -32,7 +33,7 @@ public class GatewayServlet extends HttpServlet {
             GatewayResponse gatewayResponse = new GatewayService().gatewayService(request);
 
             response.setStatus(gatewayResponse.getStatusCode());
-            response.getWriter().print(Util.getGson().toJson(gatewayResponse.getObject()));
+            response.getWriter().print(getGson().toJson(gatewayResponse.getObject()));
         }
     }
 

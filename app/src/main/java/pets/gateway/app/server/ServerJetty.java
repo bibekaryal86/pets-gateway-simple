@@ -6,21 +6,26 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import pets.gateway.app.filter.GatewayFilterLogging;
 import pets.gateway.app.filter.GatewayFilterHeaderAuth;
+import pets.gateway.app.filter.GatewayFilterLogging;
 import pets.gateway.app.servlet.GatewayServlet;
-import pets.gateway.app.util.Util;
 
 import java.util.EnumSet;
+
+import static pets.gateway.app.util.Util.SERVER_IDLE_TIMEOUT;
+import static pets.gateway.app.util.Util.SERVER_MAX_THREADS;
+import static pets.gateway.app.util.Util.SERVER_MIN_THREADS;
+import static pets.gateway.app.util.Util.SERVER_PORT;
+import static pets.gateway.app.util.Util.getSystemEnvProperty;
 
 public class ServerJetty {
 
     public void start() throws Exception {
-        QueuedThreadPool threadPool = new QueuedThreadPool(Util.SERVER_MAX_THREADS, Util.SERVER_MIN_THREADS, Util.SERVER_IDLE_TIMEOUT);
+        QueuedThreadPool threadPool = new QueuedThreadPool(SERVER_MAX_THREADS, SERVER_MIN_THREADS, SERVER_IDLE_TIMEOUT);
         Server server = new Server(threadPool);
 
         try (ServerConnector connector = new ServerConnector(server)) {
-            String port = Util.getSystemEnvProperty(Util.SERVER_PORT);
+            String port = getSystemEnvProperty(SERVER_PORT);
             connector.setPort(port == null ? 8080 : Integer.parseInt(port));
             server.setConnectors(new Connector[]{connector});
         }
